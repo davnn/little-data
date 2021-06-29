@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Little data is often enough for distance-based outlier detection</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="files/style.css" />
+  <link rel="stylesheet" href="files/custom.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Little data is often enough for distance-based outlier detection</h1>
+</header>
+<p>We show that using only a small fraction of the data to train distance-based outlier detection models often leads to no significant reduction in predictive performance over a wide range of datasets.</p>
+<p>This page contains additional information not included in the published paper. If you would like to refer to our work, please cite our work as follows:</p>
+<pre><code>@article{Muhr2022,
+  doi = {TBD},
+  url = {TBD},
+  year = {2022},
+  publisher = {TBD},
+  volume = {TBD},
+  number = {TBD},
+  pages = {TBD},
+  author = {David Muhr and Michael Affenzeller},
+  title = {Little data is often enough for distance-based outlier detection},
+  journal = {TBD}
+}</code></pre>
+<p>The datasets used in our study stem from Campos et al.’s review on the evaluation of unsupervised outlier detection and comprise a range of tabular datasets, see <a href="https://www.dbs.ifi.lmu.de/research/outlier-evaluation/DAMI/">DAMI datasets</a>. Additionally, we use twelve proprietary datasets consisting of high-dimensional manufacturing sensor data. See the table below for an overview.</p>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 53%" />
+<col style="width: 5%" />
+<col style="width: 7%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Description</th>
+<th>N</th>
+<th>Outliers</th>
+<th>Dim</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Datasets used in the literature</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="#aloi">ALOI</a></td>
+<td>Images represented with histograms features</td>
+<td>50,000</td>
+<td>1508</td>
+<td>27</td>
+</tr>
+<tr class="odd">
+<td><a href="#glass">Glass</a></td>
+<td>A dataset describing types of glass using class 6 as outlier</td>
+<td>214</td>
+<td>9</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td><a href="#ionosphere">Ionosphere</a></td>
+<td>Differentiates bad radars for structures in the Ionosphere</td>
+<td>351</td>
+<td>126</td>
+<td>32</td>
+</tr>
+<tr class="odd">
+<td><a href="#kddcup99">KDDCup99</a></td>
+<td>Data describing network intrusions or attacks</td>
+<td>60,632</td>
+<td>246</td>
+<td>41</td>
+</tr>
+<tr class="even">
+<td><a href="#pendigits">PenDigits</a></td>
+<td>Hand-written digits with class 4 downsampled as outliers</td>
+<td>9,868</td>
+<td>20</td>
+<td>16</td>
+</tr>
+<tr class="odd">
+<td><a href="#shuttle">Shuttle</a></td>
+<td>Space shuttle data using class 2 as outliers</td>
+<td>1,013</td>
+<td>13</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><a href="#waveform">Waveform</a></td>
+<td>Three classes of waves and with class 0 downsampled as outliers</td>
+<td>3,443</td>
+<td>100</td>
+<td>21</td>
+</tr>
+<tr class="odd">
+<td><a href="#wbc">WBC</a></td>
+<td>Benign or malignant cancer types with malignant as outliers</td>
+<td>454</td>
+<td>10</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><a href="#wdbc">WDBC</a></td>
+<td>Nuclear characteristics for breast cancer with malignant outliers</td>
+<td>367</td>
+<td>10</td>
+<td>30</td>
+</tr>
+<tr class="odd">
+<td>Semantically meaningful datasets</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="#annthyroid">Annthyroid</a></td>
+<td>Hypothyroidism data with classes other than normal as outliers</td>
+<td>7,200</td>
+<td>534</td>
+<td>21</td>
+</tr>
+<tr class="odd">
+<td><a href="#arrhythmia">Arrhythmia</a></td>
+<td>Cardiac arrhythmia patient records with arrhythmia as outliers</td>
+<td>450</td>
+<td>206</td>
+<td>259</td>
+</tr>
+<tr class="even">
+<td><a href="#cardiotocography">Cardiotocography</a></td>
+<td>Data set related to heart diseases with other than normal as outliers</td>
+<td>2,126</td>
+<td>471</td>
+<td>21</td>
+</tr>
+<tr class="odd">
+<td><a href="#heartdisease">HeartDisease</a></td>
+<td>Medical data on heart problems with affected patients are outliers</td>
+<td>270</td>
+<td>120</td>
+<td>13</td>
+</tr>
+<tr class="even">
+<td><a href="#internetads">InternetAds</a></td>
+<td>Web images classified as ads or not with ads being outliers</td>
+<td>3,264</td>
+<td>454</td>
+<td>1,555</td>
+</tr>
+<tr class="odd">
+<td><a href="#pageblocks">PageBlocks</a></td>
+<td>Different types of blocks in document pages with non-text as outliers</td>
+<td>5,473</td>
+<td>560</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td><a href="#pima">Pima</a></td>
+<td>Patients suffering from diabetes are considered outliers</td>
+<td>768</td>
+<td>268</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td><a href="#spambase">SpamBase</a></td>
+<td>Data set representing emails classified as normal or spam (outliers)</td>
+<td>4,601</td>
+<td>1,813</td>
+<td>57</td>
+</tr>
+<tr class="even">
+<td><a href="#stamps">Stamps</a></td>
+<td>Differentiate geniune (ink) stamps from forged stamps (outliers)</td>
+<td>340</td>
+<td>31</td>
+<td>9</td>
+</tr>
+<tr class="odd">
+<td><a href="#wilt">Wilt</a></td>
+<td>Differentiates diseased trees (outliers) from other land covers</td>
+<td>4,839</td>
+<td>261</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>Proprietary datasets</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="#sensor1a">Sensor1a</a></td>
+<td>Detect different defects (outliers) using sensor point 1 on machine ‘a’</td>
+<td>1,000</td>
+<td>30</td>
+<td>3001</td>
+</tr>
+<tr class="even">
+<td><a href="#sensor1b">Sensor1b</a></td>
+<td>Detect different defects (outliers) using sensor point 1 on machine ‘b’</td>
+<td>1,000</td>
+<td>30</td>
+<td>3001</td>
+</tr>
+<tr class="odd">
+<td><a href="#sensor1c">Sensor1c</a></td>
+<td>Detect different defects (outliers) using sensor point 1 on machine ‘c’</td>
+<td>1,000</td>
+<td>30</td>
+<td>3001</td>
+</tr>
+<tr class="even">
+<td><a href="#sensor2a">Sensor2a</a></td>
+<td>Detect different defects (outliers) using sensor point 2 on machine ‘a’</td>
+<td>1,000</td>
+<td>30</td>
+<td>3001</td>
+</tr>
+<tr class="odd">
+<td><a href="#sensor2b">Sensor2b</a></td>
+<td>Detect different defects (outliers) using sensor point 2 on machine ‘b’</td>
+<td>1,000</td>
+<td>30</td>
+<td>3001</td>
+</tr>
+<tr class="even">
+<td><a href="#sensor2c">Sensor2c</a></td>
+<td>Detect different defects (outliers) using sensor point 2 on machine ‘c’</td>
+<td>1,000</td>
+<td>30</td>
+<td>3001</td>
+</tr>
+<tr class="odd">
+<td><a href="#sensor3a">Sensor3a</a></td>
+<td>Detect different defects (outliers) using sensor point 3 on machine ‘a’</td>
+<td>1,000</td>
+<td>30</td>
+<td>1440</td>
+</tr>
+<tr class="even">
+<td><a href="#sensor3b">Sensor3b</a></td>
+<td>Detect different defects (outliers) using sensor point 3 on machine ‘b’</td>
+<td>1,000</td>
+<td>30</td>
+<td>1440</td>
+</tr>
+<tr class="odd">
+<td><a href="#sensor3c">Sensor3c</a></td>
+<td>Detect different defects (outliers) using sensor point 3 on machine ‘c’</td>
+<td>1,000</td>
+<td>30</td>
+<td>1440</td>
+</tr>
+<tr class="even">
+<td><a href="#sensor4a">Sensor4a</a></td>
+<td>Detect different defects (outliers) using sensor point 4 on machine ‘a’</td>
+<td>1,000</td>
+<td>30</td>
+<td>1440</td>
+</tr>
+<tr class="odd">
+<td><a href="#sensor4b">Sensor4b</a></td>
+<td>Detect different defects (outliers) using sensor point 4 on machine ‘b’</td>
+<td>1,000</td>
+<td>30</td>
+<td>1440</td>
+</tr>
+<tr class="even">
+<td><a href="#sensor4c">Sensor4c</a></td>
+<td>Detect different defects (outliers) using sensor point 4 on machine ‘c’</td>
+<td>1,000</td>
+<td>30</td>
+<td>1440</td>
+</tr>
+</tbody>
+</table>
+<p>For each dataset, we provide a plot showing the best ROC AUC result for a specific sampling/prototype fraction with the corresponding best value of k. You can see the individual results for each dataset below.</p>
+<p>In case there are any questions, please contact the author at firstname.lastname@bmw.com.</p>
+<h3 id="datasets-used-in-the-literature">Datasets used in the literature</h3>
+<h4 id="aloi">ALOI</h4>
+<h5 id="knn">KNN</h5>
+<p><img src="results/literature/KNN-ALOI_withoutdupl_norm.png" /></p>
+<h5 id="lof">LOF</h5>
+<p><img src="results/literature/LOF-ALOI_withoutdupl_norm.png" /></p>
+<h4 id="glass">Glass</h4>
+<h5 id="knn-1">KNN</h5>
+<p><img src="results/literature/KNN-Glass_withoutdupl_norm.png" /></p>
+<h5 id="lof-1">LOF</h5>
+<p><img src="results/literature/LOF-Glass_withoutdupl_norm.png" /></p>
+<h4 id="kddcup99">KDDCup99</h4>
+<h5 id="knn-2">KNN</h5>
+<p><img src="results/literature/KNN-KDDCup99_withoutdupl_norm_idf.png" /></p>
+<h5 id="lof-2">LOF</h5>
+<p><img src="results/literature/LOF-KDDCup99_withoutdupl_norm_idf.png" /></p>
+<h4 id="pendigits">PenDigits</h4>
+<h5 id="knn-3">KNN</h5>
+<p><img src="results/literature/KNN-PenDigits_withoutdupl_norm.png" /></p>
+<h5 id="lof-3">LOF</h5>
+<p><img src="results/literature/LOF-PenDigits_withoutdupl_norm.png" /></p>
+<h4 id="shuttle">Shuttle</h4>
+<h5 id="knn-4">KNN</h5>
+<p><img src="results/literature/KNN-Shuttle_withoutdupl_norm.png" /></p>
+<h5 id="lof-4">LOF</h5>
+<p><img src="results/literature/LOF-Shuttle_withoutdupl_norm.png" /></p>
+<h4 id="waveform">Waveform</h4>
+<h5 id="knn-5">KNN</h5>
+<p><img src="results/literature/KNN-Waveform_withoutdupl_norm.png" /></p>
+<h5 id="lof-5">LOF</h5>
+<p><img src="results/literature/LOF-Waveform_withoutdupl_norm.png" /></p>
+<h4 id="wbc">WBC</h4>
+<h5 id="knn-6">KNN</h5>
+<p><img src="results/literature/KNN-WBC_withoutdupl_norm.png" /></p>
+<h5 id="lof-6">LOF</h5>
+<p><img src="results/literature/LOF-WBC_withoutdupl_norm.png" /></p>
+<h4 id="wdbc">WDBC</h4>
+<h5 id="knn-7">KNN</h5>
+<p><img src="results/literature/KNN-WDBC_withoutdupl_norm.png" /></p>
+<h5 id="lof-7">LOF</h5>
+<p><img src="results/literature/LOF-WDBC_withoutdupl_norm.png" /></p>
+<h3 id="semantically-meaningful-datasets">Semantically meaningful datasets</h3>
+<h4 id="annthyroid">Annthyroid</h4>
+<h5 id="knn-8">KNN</h5>
+<p><img src="results/semantic/KNN-Annthyroid_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-Annthyroid_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-Annthyroid_withoutdupl_norm_07.png" /></p>
+<h5 id="lof-8">LOF</h5>
+<p><img src="results/semantic/LOF-Annthyroid_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-Annthyroid_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-Annthyroid_withoutdupl_norm_07.png" /></p>
+<h4 id="arrhythmia">Arrhythmia</h4>
+<h5 id="knn-9">KNN</h5>
+<p><img src="results/semantic/KNN-Arrhythmia_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-Arrhythmia_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-Arrhythmia_withoutdupl_norm_10.png" /> <img src="results/semantic/KNN-Arrhythmia_withoutdupl_norm_20.png" /> <img src="results/semantic/KNN-Arrhythmia_withoutdupl_norm_46.png" /></p>
+<h5 id="lof-9">LOF</h5>
+<p><img src="results/semantic/LOF-Arrhythmia_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-Arrhythmia_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-Arrhythmia_withoutdupl_norm_10.png" /> <img src="results/semantic/LOF-Arrhythmia_withoutdupl_norm_20.png" /> <img src="results/semantic/LOF-Arrhythmia_withoutdupl_norm_46.png" /></p>
+<h4 id="heartdisease">HeartDisease</h4>
+<h5 id="knn-10">KNN</h5>
+<p><img src="results/semantic/KNN-HeartDisease_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-HeartDisease_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-HeartDisease_withoutdupl_norm_10.png" /> <img src="results/semantic/KNN-HeartDisease_withoutdupl_norm_20.png" /> <img src="results/semantic/KNN-HeartDisease_withoutdupl_norm_44.png" /></p>
+<h5 id="lof-10">LOF</h5>
+<p><img src="results/semantic/LOF-HeartDisease_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-HeartDisease_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-HeartDisease_withoutdupl_norm_10.png" /> <img src="results/semantic/LOF-HeartDisease_withoutdupl_norm_20.png" /> <img src="results/semantic/LOF-HeartDisease_withoutdupl_norm_44.png" /></p>
+<h4 id="internetads">InternetAds</h4>
+<h5 id="knn-11">KNN</h5>
+<p><img src="results/semantic/KNN-InternetAds_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-InternetAds_withoutdupl_norm_10.png" /> <img src="results/semantic/KNN-InternetAds_withoutdupl_norm_19.png" /></p>
+<h5 id="lof-11">LOF</h5>
+<p><img src="results/semantic/LOF-InternetAds_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-InternetAds_withoutdupl_norm_10.png" /> <img src="results/semantic/LOF-InternetAds_withoutdupl_norm_19.png" /></p>
+<h4 id="pageblocks">PageBlocks</h4>
+<h5 id="knn-12">KNN</h5>
+<p><img src="results/semantic/KNN-PageBlocks_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-PageBlocks_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-PageBlocks_withoutdupl_norm_09.png" /></p>
+<h5 id="lof-12">LOF</h5>
+<p><img src="results/semantic/LOF-PageBlocks_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-PageBlocks_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-PageBlocks_withoutdupl_norm_09.png" /></p>
+<h4 id="pima">Pima</h4>
+<h5 id="knn-13">KNN</h5>
+<p><img src="results/semantic/KNN-Pima_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-Pima_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-Pima_withoutdupl_norm_10.png" /> <img src="results/semantic/KNN-Pima_withoutdupl_norm_20.png" /> <img src="results/semantic/KNN-Pima_withoutdupl_norm_35.png" /></p>
+<h5 id="lof-13">LOF</h5>
+<p><img src="results/semantic/LOF-Pima_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-Pima_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-Pima_withoutdupl_norm_10.png" /> <img src="results/semantic/LOF-Pima_withoutdupl_norm_20.png" /> <img src="results/semantic/LOF-Pima_withoutdupl_norm_35.png" /></p>
+<h4 id="spambase">SpamBase</h4>
+<h5 id="knn-14">KNN</h5>
+<p><img src="results/semantic/KNN-SpamBase_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-SpamBase_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-SpamBase_withoutdupl_norm_10.png" /> <img src="results/semantic/KNN-SpamBase_withoutdupl_norm_20.png" /> <img src="results/semantic/KNN-SpamBase_withoutdupl_norm_40.png" /></p>
+<h5 id="lof-14">LOF</h5>
+<p><img src="results/semantic/LOF-SpamBase_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-SpamBase_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-SpamBase_withoutdupl_norm_10.png" /> <img src="results/semantic/LOF-SpamBase_withoutdupl_norm_20.png" /> <img src="results/semantic/LOF-SpamBase_withoutdupl_norm_40.png" /></p>
+<h4 id="stamps">Stamps</h4>
+<h5 id="knn-15">KNN</h5>
+<p><img src="results/semantic/KNN-Stamps_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-Stamps_withoutdupl_norm_05.png" /> <img src="results/semantic/KNN-Stamps_withoutdupl_norm_09.png" /></p>
+<h5 id="lof-15">LOF</h5>
+<p><img src="results/semantic/LOF-Stamps_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-Stamps_withoutdupl_norm_05.png" /> <img src="results/semantic/LOF-Stamps_withoutdupl_norm_09.png" /></p>
+<h4 id="wilt">Wilt</h4>
+<h5 id="knn-16">KNN</h5>
+<p><img src="results/semantic/KNN-Wilt_withoutdupl_norm_02.png" /> <img src="results/semantic/KNN-Wilt_withoutdupl_norm_05.png" /></p>
+<h5 id="lof-16">LOF</h5>
+<p><img src="results/semantic/LOF-Wilt_withoutdupl_norm_02.png" /> <img src="results/semantic/LOF-Wilt_withoutdupl_norm_05.png" /></p>
+<h3 id="proprietary-datasets">Proprietary datasets</h3>
+<h4 id="sensor1a">Sensor1a</h4>
+<h5 id="knn-17">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor1a.png" /></p>
+<h5 id="lof-17">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor1a.png" /></p>
+<h4 id="sensor1b">Sensor1b</h4>
+<h5 id="knn-18">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor1b.png" /></p>
+<h5 id="lof-18">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor1b.png" /></p>
+<h4 id="sensor1c">Sensor1c</h4>
+<h5 id="knn-19">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor1c.png" /></p>
+<h5 id="lof-19">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor1c.png" /></p>
+<h4 id="sensor2a">Sensor2a</h4>
+<h5 id="knn-20">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor2a.png" /></p>
+<h5 id="lof-20">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor2a.png" /></p>
+<h4 id="sensor2b">Sensor2b</h4>
+<h5 id="knn-21">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor2b.png" /></p>
+<h5 id="lof-21">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor2b.png" /></p>
+<h4 id="sensor2c">Sensor2c</h4>
+<h5 id="knn-22">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor2c.png" /></p>
+<h5 id="lof-22">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor2c.png" /></p>
+<h4 id="sensor3a">Sensor3a</h4>
+<h5 id="knn-23">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor3a.png" /></p>
+<h5 id="lof-23">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor3a.png" /></p>
+<h4 id="sensor3b">Sensor3b</h4>
+<h5 id="knn-24">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor3b.png" /></p>
+<h5 id="lof-24">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor3b.png" /></p>
+<h4 id="sensor3c">Sensor3c</h4>
+<h5 id="knn-25">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor3c.png" /></p>
+<h5 id="lof-25">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor3c.png" /></p>
+<h4 id="sensor4a">Sensor4a</h4>
+<h5 id="knn-26">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor4a.png" /></p>
+<h5 id="lof-26">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor4a.png" /></p>
+<h4 id="sensor4b">Sensor4b</h4>
+<h5 id="knn-27">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor4b.png" /></p>
+<h5 id="lof-27">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor4b.png" /></p>
+<h4 id="sensor4c">Sensor4c</h4>
+<h5 id="knn-28">KNN</h5>
+<p><img src="results/proprietary/KNN-Sensor4c.png" /></p>
+<h5 id="lof-28">LOF</h5>
+<p><img src="results/proprietary/LOF-Sensor4c.png" /></p>
+</body>
+</html>
