@@ -23,7 +23,7 @@ This page contains additional information not included in the published paper. I
 
 The datasets used in our study stem from Campos et al.'s review on the evaluation of unsupervised outlier detection and comprise a range of tabular datasets, see [DAMI datasets](https://www.dbs.ifi.lmu.de/research/outlier-evaluation/DAMI/). Additionally, we use twelve proprietary datasets consisting of high-dimensional manufacturing sensor data. See the table below for an overview.
 
-| Dataset                               | Description                                                             | N      | Outliers | Dim   |
+| Dataset                               | Description                                                             | N      | Outl.    | Dim   |
 |---------------------------------------|-------------------------------------------------------------------------|--------|----------|-------|
 | Datasets used in the literature       |                                                                         |        |          |       |
 | [ALOI](#aloi)                         | Images represented with histograms features                             | 50,000 | 1508     | 27    |
