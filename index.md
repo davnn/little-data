@@ -25,7 +25,7 @@ The datasets used in our study stem from Campos et al.'s review on the evaluatio
 
 For each dataset, we provide a plot showing the best ROC AUC result for a specific sampling/prototype fraction with the corresponding best value of k. You can see the individual results for each dataset by clicking on the dataset links.
 
-| Dataset                               | Description                                                             | N      | Outliers | Dim   |
+| Dataset                               | Description                                                             | N      | Outl.    | Dim   |
 |---------------------------------------|-------------------------------------------------------------------------|--------|----------|-------|
 | Datasets used in the literature       |                                                                         |        |          |       |
 | [ALOI](#aloi)                         | Images represented with histograms features                             | 50,000 | 1508     | 27    |
