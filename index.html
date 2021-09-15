@@ -39,6 +39,7 @@
   journal = {TBD}
 }</code></pre>
 <p>The datasets used in our study stem from Campos et al.’s review on the evaluation of unsupervised outlier detection and comprise a range of tabular datasets, see <a href="https://www.dbs.ifi.lmu.de/research/outlier-evaluation/DAMI/">DAMI datasets</a>. Additionally, we use twelve proprietary datasets consisting of high-dimensional manufacturing sensor data. See the table below for an overview.</p>
+<p>For each dataset, we provide a plot showing the best ROC AUC result for a specific sampling/prototype fraction with the corresponding best value of k. You can see the individual results for each dataset by clicking on the dataset links.</p>
 <table>
 <colgroup>
 <col style="width: 28%" />
@@ -297,7 +298,7 @@
 </tr>
 </tbody>
 </table>
-<p>For each dataset, we provide a plot showing the best ROC AUC result for a specific sampling/prototype fraction with the corresponding best value of k. You can see the individual results for each dataset below.</p>
+<p>In addition to the individual dataset results, we provide plots depicting the score variances in relation to the outlier fractions of the dataset on the <a href="#score-variance-and-outlier-fraction">bottom of the page</a>.</p>
 <p>In case there are any questions, please contact the author at firstname.lastname@bmw.com.</p>
 <h3 id="datasets-used-in-the-literature">Datasets used in the literature</h3>
 <h4 id="aloi">ALOI</h4>
@@ -447,5 +448,16 @@
 <p><img src="results/proprietary/KNN-Sensor4c.png" /></p>
 <h5 id="lof-28">LOF</h5>
 <p><img src="results/proprietary/LOF-Sensor4c.png" /></p>
+<h3 id="score-variance-and-outlier-fraction">Score variance and outlier fraction</h3>
+<h4 id="random-sampling">Random sampling</h4>
+<h5 id="knn-29">KNN</h5>
+<p><img src="results/summary/KNN_fraction_sample.png" /></p>
+<h5 id="lof-29">LOF</h5>
+<p><img src="results/summary/LOF_fraction_sample.png" /></p>
+<h4 id="prototypes">Prototypes</h4>
+<h5 id="knn-30">KNN</h5>
+<p><img src="results/summary/KNN_fraction_proto.png" /></p>
+<h5 id="lof-30">LOF</h5>
+<p><img src="results/summary/LOF_fraction_proto.png" /></p>
 </body>
 </html>

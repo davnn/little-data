@@ -23,6 +23,8 @@ This page contains additional information not included in the published paper. I
 
 The datasets used in our study stem from Campos et al.'s review on the evaluation of unsupervised outlier detection and comprise a range of tabular datasets, see [DAMI datasets](https://www.dbs.ifi.lmu.de/research/outlier-evaluation/DAMI/). Additionally, we use twelve proprietary datasets consisting of high-dimensional manufacturing sensor data. See the table below for an overview.
 
+For each dataset, we provide a plot showing the best ROC AUC result for a specific sampling/prototype fraction with the corresponding best value of k. You can see the individual results for each dataset by clicking on the dataset links.
+
 | Dataset                               | Description                                                             | N      | Outliers | Dim   |
 |---------------------------------------|-------------------------------------------------------------------------|--------|----------|-------|
 | Datasets used in the literature       |                                                                         |        |          |       |
@@ -60,7 +62,7 @@ The datasets used in our study stem from Campos et al.'s review on the evaluatio
 | [Sensor4b](#sensor4b)                 | Detect different defects (outliers) using sensor point 4 on machine 'b' | 1,000  | 30       | 1440  |
 | [Sensor4c](#sensor4c)                 | Detect different defects (outliers) using sensor point 4 on machine 'c' | 1,000  | 30       | 1440  |
 
-For each dataset, we provide a plot showing the best ROC AUC result for a specific sampling/prototype fraction with the corresponding best value of k. You can see the individual results for each dataset below.
+In addition to the individual dataset results, we provide plots depicting the score variances in relation to the outlier fractions of the dataset on the [bottom of the page](#score-variance-and-outlier-fraction).
 
 In case there are any questions, please contact the author at firstname.lastname@bmw.com.
 
@@ -412,3 +414,25 @@ In case there are any questions, please contact the author at firstname.lastname
 ##### LOF
 
 ![](results/proprietary/LOF-Sensor4c.png)
+
+### Score variance and outlier fraction
+
+#### Random sampling
+
+##### KNN
+
+![](results/summary/KNN_fraction_sample.png)
+
+##### LOF
+
+![](results/summary/LOF_fraction_sample.png)
+
+#### Prototypes
+
+##### KNN
+
+![](results/summary/KNN_fraction_proto.png)
+
+##### LOF
+
+![](results/summary/LOF_fraction_proto.png)
